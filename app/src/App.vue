@@ -1,2 +1,1 @@
-<template><main><h1>BrewAssist</h1><p>Step {{ s.step }}</p></main></template>
-<script setup lang="ts">import { useBrewStore } from './stores/brew'; const s = useBrewStore()</script>
+<template><main class="max-w-2xl mx-auto p-4"><nav class="flex gap-2 text-sm"><RouterLink to="/s1">1 Inputs</RouterLink><RouterLink to="/s2">2 Recipe</RouterLink><RouterLink to="/s3">3 Feedback</RouterLink></nav><RouterView/></main></template>

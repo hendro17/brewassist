@@ -1,0 +1,3 @@
+<template><section><h1>Step 2 — Resume + Recipe + Brew Assist</h1><pre class="text-xs bg-gray-100 p-2">{{ s.inputs }}</pre><button @click="gen" class="bg-black text-white px-4 py-2 mt-2">Generate recipe</button><pre v-if="s.recipe" class="text-xs bg-green-50 p-2 mt-2">{{ s.recipe }}</pre><p><RouterLink to="/s3">→ Feedback</RouterLink></p></section></template>
+<script setup lang="ts">import { useBrewStore } from '../stores/brew'; const s = useBrewStore()
+async function gen(){ const r = await fetch('/api/recipe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(s.inputs)}); s.setRecipe(await r.json()) }</script>
