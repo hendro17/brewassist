@@ -4,11 +4,14 @@ export function computeModifiers(i: any) {
   const age_days = Math.floor((Date.now() - new Date(i.roast_date).getTime()) / 86400000)
   let grind_um = 700, temp = 92, bloom_mult = 2, bloom_s = 35, ratio = 16
   const roastTemp: Record<string, number> = { light: 93.5, 'light-to-medium': 92.5, medium: 91.5, 'medium-to-dark': 90.5, dark: 90 }
+  const roastCap: Record<string, [number, number]> = { light: [93, 94], 'light-to-medium': [92, 93], medium: [91, 92], 'medium-to-dark': [90, 91], dark: [90, 91] }
   temp = roastTemp[i.roast_level] ?? 92
   if (i.altitude_masl > 1370) { grind_um -= 60; temp += 1; bloom_s += 15 }
   else if (i.altitude_masl >= 1200) { grind_um -= 30; bloom_s += 10 }
   else if (i.altitude_masl < 1000) { grind_um += 60; temp -= 1 }
   if (age_days <= 7) { grind_um += 60; temp -= 1; bloom_s = Math.max(bloom_s, 45) }
+  const cap = roastCap[i.roast_level] ?? [88, 94]
+  temp = Math.min(Math.max(temp, cap[0]), cap[1])
   const t: Record<string, any> = {
     acid: { r: 16, b: 3, s: 45 }, sweet: { r: 15, b: 2, s: 30 },
     balance: { r: 16, b: 2, s: 35 }, body: { r: 14, b: 2, s: 30 },

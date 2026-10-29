@@ -1,1 +1,1 @@
-{"name":"@brewassist/server","type":"module","private":true,"scripts":{"dev":"tsx watch src/index.ts"},"dependencies":{"hono":"^4","zod":"^3"},"devDependencies":{"tsx":"^4","typescript":"^5"}}
+{"name":"@brewassist/server","type":"module","private":true,"scripts":{"dev":"tsx watch src/index.ts","typecheck":"tsc --noEmit","test":"vitest run"},"dependencies":{"hono":"^4","zod":"^3"},"devDependencies":{"tsx":"^4","typescript":"^5"}}

@@ -1,0 +1,48 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: sonar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sonar:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build + test coverage (lcov)
+        run: |
+          npm run typecheck
+          npm test -- --coverage
+          test -f coverage/lcov.info || (echo "lcov missing" && exit 1)
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        if: github.actor != 'dependabot[bot]'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.2.0
+        if: github.actor != 'dependabot[bot]'
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
