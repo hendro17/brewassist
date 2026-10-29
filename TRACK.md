@@ -41,6 +41,16 @@ Audit format: ID, task, status (TODO/WIP/DONE), evidence (commit/config/file), d
 | T5.1 | Index brewassist repo (.gitnexus/gitnexus.json) | DONE | gitnexus analyze: 104 nodes 144 edges 4 clusters | 2026-10-29 |
 | T5.2 | Scan report saved to findings/ | DONE | findings/brewassist-gitnexus-scan.md, cycles clean | 2026-10-29 |
 
+## Wave 6 — Phase 4 Features
+| ID | Task | Status | Evidence | Date |
+|----|------|--------|----------|------|
+| T6.1 | Seed B6/B7/B9/B10 hardware data | DONE | server/src/db/seed-hardware.sql + live: 10 grinders, 4 waters, 9 filters, 8 drippers, verified=false | 2026-10-29 |
+| T6.2 | Wire LLM call in recipe route | DONE | server/src/lib/llm.ts + routes/recipe.ts engine+LLM, validator-gated, fail-closed, score 10.0 | 2026-10-29 |
+| T6.3 | Build timer with Native Audio | DONE | app/src/composables/useBrewTimer.ts + Step2 timer UI, Web Audio beep, 800ms pre-pour, score 10.0 | 2026-10-29 |
+| T6.4 | Install Shadcn-Vue + PWA | DONE | reka-ui/cva/clsx/tailwind-merge + vite-plugin-pwa SW generated, cn() utils, build green | 2026-10-29 |
+| T6.5 | Fix 17 a11y labels | DONE | Step1 15 labels + Step3 3 labels, native label/input pairs | 2026-10-29 |
+| T6.6 | Key settings BYOK UI | DONE | app/src/components/KeySettings.vue max-3 ping-gated localStorage | 2026-10-29 |
+
 ## References
 - Sonar workflow: `Herd/hitung-swdkllj/.github/workflows/build.yml` (SONAR scan v8.2.2 + gate v1.2.1).
 - Sonar props: `Herd/hitung-swdkllj/sonar-project.properties`.
