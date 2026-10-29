@@ -15,7 +15,7 @@ Audit format: ID, task, status (TODO/WIP/DONE), evidence (commit/config/file), d
 | ID | Task | Status | Evidence | Date |
 |----|------|--------|----------|------|
 | T2.1 | `.github/workflows/ci.yml` lint/typecheck/test on PR+push | DONE | ci.yml npm ci + typecheck + coverage lcov check | 2026-10-29 |
-| T2.2 | Secrets SONAR_TOKEN + SONAR_HOST_URL set in repo | TODO | user action GitHub Settings > Secrets | - |
+| T2.2 | Secrets SONAR_TOKEN + SONAR_HOST_URL set in repo | DONE | gh secret set both, verified in run log | 2026-10-29 |
 
 ## Wave 3 — SonarQube
 | ID | Task | Status | Evidence | Date |
@@ -23,7 +23,10 @@ Audit format: ID, task, status (TODO/WIP/DONE), evidence (commit/config/file), d
 | T3.1 | sonar-project.properties (sources app/src server/src) | DONE | key placeholder hendro17_brewassist_REPLACE_UUID + org hendro17 | 2026-10-29 |
 | T3.2 | Workflow job sonar scan + quality gate (sonar.yml) | DONE | sonar.yml scan v6 + gate v1.2.0 | 2026-10-29 |
 | T3.3 | Coverage lcov generated in CI | DONE local | vitest config reporter lcov, coverage/lcov.info verified | 2026-10-29 |
-| T3.4 | Create SonarCloud project brewassist, paste real key | TODO | user action sonarcloud.io | - |
+| T3.4 | Create SonarCloud project brewassist, paste real key | DONE | project hendro17_brewassist_638d026b-d0f1-4d52-850c-dc4600813732 via UI, key in properties | 2026-10-29 |
+| T3.5 | Quality gate verify | DONE | gate OK, ncloc 91, coverage 57%, dup 0% | 2026-10-29 |
+| T3.6 | Fix Sonar S1854 dead assignments modifiers.ts | DONE | refactor const axis table, score 10.0 | 2026-10-29 |
+| T3.7 | Fix 17x Web:InputWithoutLabelCheck Step1/Step3 | TODO | with Shadcn-Vue labeled form components | - |
 
 ## Wave 4 — CodeScene
 | ID | Task | Status | Evidence | Date |
