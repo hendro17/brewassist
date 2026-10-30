@@ -70,7 +70,7 @@ Audit format: ID, task, status (TODO/WIP/DONE), evidence (commit/config/file), d
 | T8.7 | Test useBrewTimer (vitest fake-timer) | DONE | rAF manual + AudioContext stub, 3 test | 2026-10-30 |
 | T8.8 | keys.ts ping: validasi base_url + sanitasi error upstream | DONE | block localhost/internal, tanpa echo upstream reply, 3 test | 2026-10-30 |
 | T8.9 | Verifikasi findings/brewassist-gitnexus-scan.md (klaim T5.2 vs glob kosong) | DONE | file tak pernah ada di history → reindex 283n/491e + report baru | 2026-10-30 |
-| T8.10 | Commit perubahan TRACK konsolidasi | TODO | - | - |
+| T8.10 | Commit perubahan TRACK konsolidasi | DONE | ab9d6e0, 15 files wave8 | 2026-10-30 |
 
 ## References
 - Sonar workflow: `Herd/hitung-swdkllj/.github/workflows/build.yml` (SONAR scan v8.2.2 + gate v1.2.1).
