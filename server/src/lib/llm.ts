@@ -61,7 +61,7 @@ export async function callBrewLlm(key: LlmKey, userPayload: unknown): Promise<{ 
 export function parseRecipeJson(text: string): any {
   const parsed = JSON.parse(text)
   if (typeof parsed.volume_ml !== 'number' || typeof parsed.temp_c !== 'number') {
-    throw new Error('LLM JSON missing volume_ml/temp_c')
+    throw new TypeError('LLM JSON missing volume_ml/temp_c')
   }
   return parsed
 }
