@@ -19,13 +19,13 @@
       <label for="f-roast-date" class="mt-2 block">Roast date</label>
       <input id="f-roast-date" v-model="f.roast_date" type="date" class="border p-2 w-full" />
       <label for="f-dripper" class="mt-2 block">Dripper</label>
-      <input id="f-dripper" v-model="f.dripper" placeholder="Dripper e.g. Hario V60" class="border p-2 w-full" />
+      <select id="f-dripper" v-model="f.dripper" class="border p-2 w-full"><option v-for="d in DRIPPERS" :key="d" :value="d">{{ d }}</option></select>
       <label for="f-filter" class="mt-2 block">Filter</label>
-      <input id="f-filter" v-model="f.filter" placeholder="Filter e.g. Cafec T-90" class="border p-2 w-full" />
+      <select id="f-filter" v-model="f.filter" class="border p-2 w-full"><option v-for="x in FILTERS" :key="x" :value="x">{{ x }}</option></select>
       <label for="f-grinder" class="mt-2 block">Grinder</label>
-      <input id="f-grinder" v-model="f.grinder" placeholder="Grinder e.g. 1Zpresso J-Ultra" class="border p-2 w-full" />
+      <select id="f-grinder" v-model="f.grinder" class="border p-2 w-full"><option v-for="g in GRINDERS" :key="g" :value="g">{{ g }}</option></select>
       <label for="f-water" class="mt-2 block">Water</label>
-      <input id="f-water" v-model="f.water_brand" placeholder="Water e.g. Aqua" class="border p-2 w-full" />
+      <select id="f-water" v-model="f.water_brand" class="border p-2 w-full"><option v-for="w in WATERS" :key="w" :value="w">{{ w }}</option></select>
       <label for="f-target" class="mt-2 block">Target</label>
       <select id="f-target" v-model="f.target" class="border p-2 w-full"><option>acid</option><option>sweet</option><option>balance</option><option>body</option><option>complex</option><option>clean</option></select>
       <label for="f-dose" class="mt-2 block">Dose g</label>
@@ -35,6 +35,7 @@
   </section>
 </template>
 <script setup lang="ts">import { reactive } from 'vue'; import { useRouter } from 'vue-router'; import { useBrewStore } from '../stores/brew'
+import { GRINDERS, WATERS, FILTERS, DRIPPERS } from '../lib/hardware'
 const s = useBrewStore(); const r = useRouter()
 const f = reactive({ roastery:'', origin:'', origin_mode:'single', variety:'', altitude_masl:1400, process:'washed', roast_level:'medium', roast_date:'', dripper:'Hario V60', filter:'Cafec T-90', grinder:'1Zpresso J-Ultra', water_brand:'Aqua', target:'balance', dose_g:15 })
 function next(){ s.setInputs({...f}); r.push('/s2') }</script>

@@ -1,18 +1,19 @@
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, toValue, watch, type MaybeRef } from 'vue'
 
 // Native Audio timer (findings C6b SSOT). Web Audio oscillator beep, no file download.
 // States: idle, pouring, done. Pause keeps offset.
+// Accepts refs so Step2 can pass computed recipe (snapshot would freeze at empty).
 export type PourStep = { step: number; t_ms: number; grams: number; method: string; note?: string }
 
-export function useBrewTimer(pours: PourStep[], total_ms: number) {
+export function useBrewTimer(pours: MaybeRef<PourStep[]>, total_ms: MaybeRef<number>) {
   const elapsed = ref(0)
   const running = ref(false)
   const state = computed(() => {
     if (elapsed.value <= 0) return 'idle'
-    if (elapsed.value >= total_ms) return 'done'
+    if (elapsed.value >= toValue(total_ms)) return 'done'
     return 'pouring'
   })
-  const nextPour = computed(() => pours.find((p) => p.t_ms > elapsed.value) ?? null)
+  const nextPour = computed(() => toValue(pours).find((p) => p.t_ms > elapsed.value) ?? null)
   let raf = 0
   let last = 0
   let ctx: AudioContext | null = null
@@ -52,7 +53,7 @@ export function useBrewTimer(pours: PourStep[], total_ms: number) {
     elapsed.value += ts - last
     last = ts
     maybeBeep()
-    if (elapsed.value >= total_ms) {
+    if (elapsed.value >= toValue(total_ms)) {
       running.value = false
       beep()
       return
@@ -76,6 +77,9 @@ export function useBrewTimer(pours: PourStep[], total_ms: number) {
     elapsed.value = 0
     ticked.clear()
   }
+
+  // New recipe after generate -> reset stale elapsed/beep state.
+  watch(() => toValue(total_ms), () => reset())
 
   onUnmounted(() => cancelAnimationFrame(raf))
   return { elapsed, running, state, nextPour, start, pause, reset, beep }

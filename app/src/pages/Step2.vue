@@ -6,6 +6,7 @@
       <button @click="gen" class="bg-black text-white px-4 py-2">Generate recipe</button>
       <RouterLink to="/s3" class="px-4 py-2 border">→ Feedback</RouterLink>
     </div>
+    <p v-if="genError" role="alert" class="text-sm text-red-700 mt-2">{{ genError }}</p>
     <pre v-if="s.recipe" class="text-xs bg-green-50 p-2 mt-2">{{ s.recipe }}</pre>
     <KeySettings />
     <div v-if="pours.length" class="mt-4 border p-3">
@@ -26,24 +27,41 @@
   </section>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useBrewStore } from '../stores/brew'
 import { useBrewTimer } from '../composables/useBrewTimer'
 import KeySettings from '../components/KeySettings.vue'
 const s = useBrewStore()
+const genError = ref('')
 async function gen() {
-  const keys = JSON.parse(localStorage.getItem('brewassist-keys') ?? '[]')
-  const d = keys.find((k: any) => k.is_default)
-  const r = await fetch('/api/recipe', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...s.inputs, llm_key: d ? { ...d } : undefined }),
-  })
-  s.setRecipe(await r.json())
+  genError.value = ''
+  let d: any
+  try {
+    const keys = JSON.parse(localStorage.getItem('brewassist-keys') ?? '[]')
+    d = keys.find((k: any) => k.is_default)
+  } catch {
+    genError.value = 'Saved keys unreadable — re-save in Key Settings.'
+    return
+  }
+  try {
+    const r = await fetch('/api/recipe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...s.inputs, llm_key: d ? { ...d } : undefined }),
+    })
+    const data = await r.json()
+    if (!r.ok) {
+      genError.value = Array.isArray(data?.error) ? data.error.join('; ') : `Recipe failed (${r.status})`
+      return
+    }
+    s.setRecipe(data)
+  } catch {
+    genError.value = 'Network error — server unreachable.'
+  }
 }
 const pours = computed(() => s.recipe?.recipe?.pours ?? [])
 const total = computed(() => s.recipe?.recipe?.total_ms ?? 0)
-const { elapsed, state, nextPour: next, start, pause, reset, beep } = useBrewTimer(pours.value as any, total.value)
+const { elapsed, state, nextPour: next, start, pause, reset, beep } = useBrewTimer(pours, total)
 function fmt(ms: number) {
   const m = String(Math.floor(ms / 60000)).padStart(2, '0')
   const sec = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')

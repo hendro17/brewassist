@@ -17,6 +17,21 @@ function staleError(mods: any): string[] | null {
   return null
 }
 
+function llmShapeErrors(llm: any): string[] {
+  const errs: string[] = []
+  if (typeof llm.volume_ml !== 'number' || !Number.isFinite(llm.volume_ml)) errs.push('llm volume_ml invalid')
+  if (typeof llm.temp_c !== 'number' || llm.temp_c < 88 || llm.temp_c > 94) errs.push('llm temp_c out of 88-94')
+  if (!Array.isArray(llm.pours) || llm.pours.length === 0) errs.push('llm pours empty')
+  else {
+    let prev = -1
+    for (const p of llm.pours) {
+      if (typeof p.t_ms !== 'number' || p.t_ms < 0 || p.t_ms <= prev) { errs.push('llm pours t_ms not ascending'); break }
+      prev = p.t_ms
+    }
+  }
+  return errs
+}
+
 async function handleLlm(c: any, body: any, mods: any, engine: any) {
   const key = body.llm_key
   const started = Date.now()
@@ -28,6 +43,16 @@ async function handleLlm(c: any, body: any, mods: any, engine: any) {
       engine_baseline: engine,
     })
     const llm = parseRecipeJson(text)
+    const shapeErrs = llmShapeErrors(llm)
+    if (shapeErrs.length > 0) {
+      return c.json({
+        recipe: { ...engine, mods, status: 'engine-fallback-llm-invalid', llm_error: shapeErrs },
+        provider_label: key.label ?? null,
+        model: key.model,
+        latency_ms: Date.now() - started || latency_ms,
+        rule_version: RULE_VERSION,
+      })
+    }
     return c.json({
       recipe: { ...engine, ...llm, mods, status: 'llm' },
       provider_label: key.label ?? null,
