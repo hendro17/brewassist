@@ -54,5 +54,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           PULL_NR="${{ github.event.pull_request.number }}"
-          API="$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=hendro17_brewassist_638d026b-d0f1-4d52-850c-dc4600813732&pullRequest=$PULL_NR"
-          curl -s -u "$SONAR_TOKEN:" "$API" | python3 -m json.tool | head -60
+          KEY=hendro17_brewassist_638d026b-d0f1-4d52-850c-dc4600813732
+          curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$KEY&pullRequest=$PULL_NR" | python3 -m json.tool | head -60
+          echo "=== NEW ISSUES ==="
+          curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/issues/search?componentKeys=$KEY&pullRequest=$PULL_NR&inNewCodePeriod=true&ps=20&facets=rules" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(i['rule'], '|', i['component'].split('/')[-1], '|', i['message'][:120]) for i in d.get('issues',[])]"
