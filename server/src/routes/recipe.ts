@@ -42,7 +42,18 @@ async function handleLlm(c: any, body: any, mods: any, engine: any) {
       modifiers_applied: mods,
       engine_baseline: engine,
     })
-    const llm = parseRecipeJson(text)
+    let llm: any
+    try {
+      llm = parseRecipeJson(text)
+    } catch (e: any) {
+      return c.json({
+        recipe: { ...engine, mods, status: 'engine-fallback-llm-invalid', llm_error: [String(e?.message ?? e)] },
+        provider_label: key.label ?? null,
+        model: key.model,
+        latency_ms: Date.now() - started,
+        rule_version: RULE_VERSION,
+      })
+    }
     const shapeErrs = llmShapeErrors(llm)
     if (shapeErrs.length > 0) {
       return c.json({
