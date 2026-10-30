@@ -46,3 +46,13 @@ jobs:
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Dump failing gate conditions (debug)
+        if: failure()
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          PULL_NR="${{ github.event.pull_request.number }}"
+          API="$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=hendro17_brewassist_638d026b-d0f1-4d52-850c-dc4600813732&pullRequest=$PULL_NR"
+          curl -s -u "$SONAR_TOKEN:" "$API" | python3 -m json.tool | head -60

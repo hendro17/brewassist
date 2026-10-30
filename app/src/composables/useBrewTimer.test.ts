@@ -2,6 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
 import { useBrewTimer } from './useBrewTimer'
 
+// onUnmounted only works inside setup() — noop it for direct composable tests.
+vi.mock('vue', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('vue')>()),
+  onUnmounted: vi.fn(),
+}))
+
 // rAF manual: capture latest callback, run with controlled timestamps.
 let rafCb: FrameRequestCallback | null = null
 vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
