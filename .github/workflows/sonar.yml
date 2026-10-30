@@ -58,3 +58,11 @@ jobs:
           curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$KEY&pullRequest=$PULL_NR" | python3 -m json.tool | head -60
           echo "=== NEW ISSUES ==="
           curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/issues/search?componentKeys=$KEY&pullRequest=$PULL_NR&inNewCodePeriod=true&ps=20&facets=rules" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(i['rule'], '|', i['component'].split('/')[-1], '|', i['message'][:120]) for i in d.get('issues',[])]"
+          echo "=== LOWEST NEW COVERAGE FILES ==="
+          curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component_tree?component=$KEY&pullRequest=$PULL_NR&metricKeys=coverage&ps=30" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+rows=[(c.get('path','?'), next((m.get('value','?') for m in c.get('measures',[]) if m.get('metric')=='coverage'), '?')) for c in d.get('components',[])]
+rows.sort(key=lambda r: float(r[1]) if r[1]!='?' else 999)
+[print(f'{v:>6}  {p}') for p,v in rows[:15]]
+"
