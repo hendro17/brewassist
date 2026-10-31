@@ -56,7 +56,7 @@ Audit format: ID, task, status (TODO/WIP/DONE), evidence (commit/config/file), d
 |----|------|--------|----------|------|
 | T7.1 | Commit uncommitted Wave 6 payload evidence (6a40c36 stat cites pours.ts/validator? verify) | DONE | verified tracked: seed-hardware.sql, llm.ts, useBrewTimer.ts, KeySettings.vue | 2026-10-30 |
 | T7.2 | Re-run npm test + typecheck green post-consolidation | DONE | vitest 17/17, vue-tsc + tsc clean | 2026-10-30 |
-| T7.3 | Sonar rescan confirm InputWithoutLabelCheck closed | WIP | a11y issues gone (new_violations=0 at 74.6% run); gate FAIL only on new_coverage 74.6<80. Fix: .vue SFC now covered (plugin-vue+happy-dom), 46 tests, KeySettings 65%/Step2 82%. Awaiting dashboard confirm | 2026-10-31 |
+| T7.3 | Sonar rescan confirm InputWithoutLabelCheck closed | DONE | gate hijau: sonar 41164973611 + CI 41164973625 success, PR CLEAN | 2026-10-31 |
 
 ## Wave 8 — Bugs + Dead Ends
 | ID | Task | Status | Evidence | Date |
