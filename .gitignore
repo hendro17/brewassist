@@ -4,3 +4,6 @@ dist
 .env*
 coverage/
 .DS_Store
+.opencode/
+.gitnexus/parse-cache/
+.gitnexus/parsedfile-cache/

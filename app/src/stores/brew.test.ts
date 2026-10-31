@@ -1,9 +1,24 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useBrewStore } from './brew'
 
+// node env has no localStorage — stub it.
+const ls = (() => {
+  let s: Record<string, string> = {}
+  return {
+    getItem: (k: string) => s[k] ?? null,
+    setItem: (k: string, v: string) => { s[k] = v },
+    removeItem: (k: string) => { delete s[k] },
+    clear: () => { s = {} },
+  }
+})()
+vi.stubGlobal('localStorage', ls)
+
 describe('brew store 3-step flow', () => {
-  beforeEach(() => setActivePinia(createPinia()))
+  beforeEach(() => {
+    localStorage.clear()
+    setActivePinia(createPinia())
+  })
 
   it('starts at step 1', () => {
     expect(useBrewStore().step).toBe(1)

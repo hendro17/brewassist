@@ -6,6 +6,7 @@ import App from './App.vue'
 import Step1 from './pages/Step1.vue'
 import Step2 from './pages/Step2.vue'
 import Step3 from './pages/Step3.vue'
+import { useBrewStore } from './stores/brew'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,4 +17,6 @@ const router = createRouter({
     { path: '/s3', component: Step3 },
   ],
 })
-createApp(App).use(createPinia()).use(router).mount('#app')
+const pinia = createPinia()
+createApp(App).use(pinia).use(router).mount('#app')
+useBrewStore(pinia).loadSaved()
