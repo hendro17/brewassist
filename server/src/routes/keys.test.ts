@@ -18,10 +18,27 @@ describe('keys ping guard', () => {
     expect(r.data.valid).toBe(false)
   })
 
-  it('blocks localhost base_url', async () => {
+  it('blocks localhost base_url by default', async () => {
     const r = await ping({ base_url: 'http://localhost:11434', api_key: 'k', model: 'm' })
     expect(r.status).toBe(400)
     expect(r.data.valid).toBe(false)
+    expect(r.data.error).toContain('ALLOW_LOCAL_LLM')
+  })
+
+  it('allows localhost when ALLOW_LOCAL_LLM=1', async () => {
+    process.env.ALLOW_LOCAL_LLM = '1'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ choices: [{ message: { content: 'pong!' } }] }),
+      })),
+    )
+    const r = await ping({ base_url: 'http://localhost:11434', api_key: 'k', model: 'm' })
+    expect(r.status).toBe(200)
+    expect(r.data.valid).toBe(true)
+    delete process.env.ALLOW_LOCAL_LLM
   })
 
   it('rejects missing key/model', async () => {

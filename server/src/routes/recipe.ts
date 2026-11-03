@@ -17,6 +17,25 @@ function staleError(mods: any): string[] | null {
   return null
 }
 
+function pourTimeMs(p: any): number {
+  if (typeof p.t_ms === 'number') return p.t_ms
+  if (typeof p.time === 'number') return p.time < 1000 ? p.time * 1000 : p.time
+  return Number.NaN
+}
+
+function normalizePours(pours: any[]): any[] {
+  return pours.map((p) => {
+    const { time, ...rest } = p
+    return { ...rest, t_ms: pourTimeMs(p) }
+  })
+}
+
+function fmtTotal(ms: number): string {
+  const mm = String(Math.floor(ms / 60000)).padStart(2, '0')
+  const ss = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')
+  return `${mm}:${ss}`
+}
+
 function llmShapeErrors(llm: any): string[] {
   const errs: string[] = []
   if (typeof llm.volume_ml !== 'number' || !Number.isFinite(llm.volume_ml)) errs.push('llm volume_ml invalid')
@@ -25,8 +44,10 @@ function llmShapeErrors(llm: any): string[] {
   else {
     let prev = -1
     for (const p of llm.pours) {
-      if (typeof p.t_ms !== 'number' || p.t_ms < 0 || p.t_ms <= prev) { errs.push('llm pours t_ms not ascending'); break }
-      prev = p.t_ms
+      // Accept t_ms (engine shape) or time (prompt shape, seconds or ms).
+      const t = pourTimeMs(p)
+      if (!Number.isFinite(t) || t < 0 || t <= prev) { errs.push('llm pours time not ascending'); break }
+      prev = t
     }
   }
   return errs
@@ -64,8 +85,11 @@ async function handleLlm(c: any, body: any, mods: any, engine: any) {
         rule_version: RULE_VERSION,
       })
     }
+    // Normalize to engine shape before merge: single t_ms field, totals derived from last pour.
+    const llmPours = normalizePours(llm.pours)
+    const total_ms = (llmPours.at(-1)?.t_ms ?? 0) + 45000 // same drawdown as engine
     return c.json({
-      recipe: { ...engine, ...llm, mods, status: 'llm' },
+      recipe: { ...engine, ...llm, pours: llmPours, total_ms, total_time: fmtTotal(total_ms), mods, status: 'llm' },
       provider_label: key.label ?? null,
       model: key.model,
       latency_ms: Date.now() - started || latency_ms,

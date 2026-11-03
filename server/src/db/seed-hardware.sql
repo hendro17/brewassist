@@ -34,6 +34,18 @@ INSERT INTO public.hardware_filters (key, specs, source_url, verified) VALUES
 ('Sibarist B3', '{"speed":"medium","roast_match":"all","modifier":"none baseline alt, reduces bypass"}', 'https://sibarist.com', false)
 ON CONFLICT (key) DO NOTHING;
 
+INSERT INTO public.hardware_processes (key, specs, source_url, verified) VALUES
+('washed', '{"alias":["wet","full-washed"],"character":"clean bright"}', 'https://brewassist.local/kb/process', false),
+('natural', '{"alias":["dry"],"character":"fruity heavy"}', 'https://brewassist.local/kb/process', false),
+('honey', '{"alias":["yellow-honey","red-honey","black-honey"],"character":"sweet round"}', 'https://brewassist.local/kb/process', false),
+('semi-washed', '{"alias":["wet-hulled","giling-basah"],"character":"earthy body"}', 'https://brewassist.local/kb/process', false),
+('anaerobic natural', '{"character":"winey funky"}', 'https://brewassist.local/kb/process', false),
+('anaerobic washed', '{"character":"clean funky"}', 'https://brewassist.local/kb/process', false),
+('carbonic maceration', '{"character":"spice winey"}', 'https://brewassist.local/kb/process', false),
+('wine', '{"character":"boozy fruit"}', 'https://brewassist.local/kb/process', false),
+('monsooned', '{"character":"mellow low-acid"}', 'https://brewassist.local/kb/process', false)
+ON CONFLICT (key) DO NOTHING;
+
 INSERT INTO public.hardware_drippers (key, specs, source_url, verified) VALUES
 ('Hario V60', '{"geometry":"conical","holes":1,"flow":"fast free","default_pour":"spiral slow, technique-sensitive","grind_modifier":"baseline, clarity acid"}', 'https://hario.jp', false),
 ('Origami Cone', '{"geometry":"conical","flow":"fast","default_pour":"same as V60, drawdown -10s, ridged walls"}', 'https://origami.com', false),

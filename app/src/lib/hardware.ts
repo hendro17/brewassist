@@ -1,5 +1,17 @@
 // Hardware options mirrored from server/src/db/seed-hardware.sql (B6/B7/B9/B10).
 // shortcut: static mirror, no Supabase client. Upgrade to API lookup when server gets DB client.
+export const PROCESSES = [
+  'washed',
+  'natural',
+  'honey',
+  'semi-washed',
+  'anaerobic natural',
+  'anaerobic washed',
+  'carbonic maceration',
+  'wine',
+  'monsooned',
+] as const
+
 export const GRINDERS = [
   '1Zpresso J-Ultra',
   '1Zpresso K-Ultra',

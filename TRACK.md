@@ -72,8 +72,14 @@ Audit format: ID, task, status (TODO/WIP/DONE), evidence (commit/config/file), d
 | T8.9 | Verifikasi findings/brewassist-gitnexus-scan.md (klaim T5.2 vs glob kosong) | DONE | file tak pernah ada di history → reindex 283n/491e + report baru | 2026-10-30 |
 | T8.10 | Commit perubahan TRACK konsolidasi | DONE | ab9d6e0, 15 files wave8 | 2026-10-30 |
 
+## Wave 9 — Trial & Smoke
+| ID | Task | Status | Evidence | Date |
+|----|------|--------|----------|------|
+| T9.1 | Server smoke test (health + engine recipe + stale + validator) | DONE | server/src/trial-smoke.test.ts 4/4 | 2026-10-31 |
+| T9.2 | Dev trial E2E (app :5174 + serve.ts :3000 + proxy recipe) | DONE | 5173 milik idaman-jr → brewassist pindah 5174; sweet 225ml via /api/recipe | 2026-10-31 |
+| T9.3 | Commit trial artifacts + stop dev servers | TODO | - | - |
+
 ## References
-- Sonar workflow: `Herd/hitung-swdkllj/.github/workflows/build.yml` (SONAR scan v8.2.2 + gate v1.2.1).
 - Sonar props: `Herd/hitung-swdkllj/sonar-project.properties`.
 - CodeScene rules: `Herd/DeepEye-scanner-suite/.codescene/code-health-rules.json`.
 - GitNexus index: `Herd/hitung-swdkllj/.gitnexus/gitnexus.json`.

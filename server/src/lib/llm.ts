@@ -6,7 +6,7 @@ const SYSTEM = `You are a pour-over recipe engine. Use only supplied params and 
 Rules: acid=clarity bright pulse; sweet=round sugars low agitation; balance=middle; body=coarse big continuous; complex=split pulse; clean=gentle center minimal.
 Temp caps: light 93-94, light-to-medium 92-93, medium 91-92, medium-to-dark 90-91, dark 90.
 Ratio: acid 1:16, sweet 1:15, balance 1:16, body 1:14, complex 1:16, clean 1:17.
-Return JSON: {volume_ml,temp_c,grind_setting,bloom_g,bloom_s,pours[{step,time,grams,method,agitation,note}],total_time,expected_cup,next_tune_hint}.`
+Return JSON: {volume_ml,temp_c,grind_setting,bloom_g,bloom_s,pours[{step,t_ms,grams,method,agitation,note}],total_time,expected_cup,next_tune_hint}. t_ms is milliseconds, ascending, step 0 at 0.`
 
 function llmBody(key: LlmKey, userPayload: unknown): string {
   return JSON.stringify({
