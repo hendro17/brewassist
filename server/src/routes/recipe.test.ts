@@ -74,6 +74,66 @@ describe('recipe route', () => {
     expect(data.model).toBe('m')
   })
 
+  it('normalizes legacy time pours and derives totals', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { content: '{"volume_ml":240,"temp_c":92,"pours":[{"step":0,"time":0},{"step":1,"time":75}]}' } }],
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        ),
+      ),
+    )
+
+    const res = await recipe.request('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...bodyBase(),
+        llm_key: { base_url: 'https://example.test/v1', api_key: 'k', model: 'm' },
+      }),
+    })
+    const data = (await res.json()) as any
+
+    expect(res.status).toBe(200)
+    expect(data.recipe.status).toBe('llm')
+    // legacy time:75s -> t_ms:75000; derived totals: last pour + 45s drawdown
+    expect(data.recipe.pours[1].t_ms).toBe(75000)
+    expect(data.recipe.pours[1].time).toBeUndefined()
+    expect(data.recipe.total_ms).toBe(120000)
+    expect(data.recipe.total_time).toBe('02:00')
+  })
+
+  it('derives totals from last pour for t_ms shape', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { content: '{"volume_ml":240,"temp_c":92,"pours":[{"step":0,"t_ms":0},{"step":1,"t_ms":130000}],"total_time":"02:45","total_ms":180000}' } }],
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        ),
+      ),
+    )
+
+    const res = await recipe.request('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...bodyBase(),
+        llm_key: { base_url: 'https://example.test/v1', api_key: 'k', model: 'm' },
+      }),
+    })
+    const data = (await res.json()) as any
+
+    // LLM-claimed totals ignored; derived: 130000 + 45000 = 175000 -> 02:55
+    expect(data.recipe.total_ms).toBe(175000)
+    expect(data.recipe.total_time).toBe('02:55')
+  })
+
   it('falls back to engine when llm output shape is invalid', async () => {
     vi.stubGlobal(
       'fetch',

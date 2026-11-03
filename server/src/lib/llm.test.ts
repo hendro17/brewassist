@@ -49,6 +49,14 @@ describe('callBrewLlm', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it('system prompt demands t_ms pours shape', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    await callBrewLlm(key, { dose_g: 15 }).catch(() => {})
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+    expect(body.messages[0].content).toContain('pours[{step,t_ms,grams')
+  })
+
   it('throws with status details for non-ok responses', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('bad request', { status: 400 })))
 
